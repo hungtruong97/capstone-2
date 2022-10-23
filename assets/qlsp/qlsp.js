@@ -17,7 +17,7 @@ async function getProducts() {
 //Function add Products
 async function addProduct() {
   //validate form
-  var isFormValid = await validateForm();
+  var isFormValid = await validateFormForAddingProduct();
   if (!isFormValid) return;
 
   const name = document.getElementById("name").value;
@@ -96,12 +96,15 @@ async function getProduct(productId) {
   //Hide add Product button, show update Product button
   document.getElementById("addProductBtn").style.display = "none";
   document.getElementById("updateProductBtn").style.display = "block";
+
+  //Disable name field
+  document.getElementById("name").disabled = true;
 }
 
 //Function update Product
 async function updateProduct() {
   //validate form
-  var isFormValid = await validateForm();
+  var isFormValid = await validateFormForUpdatingProduct();
   if (!isFormValid) return;
 
   //take new data
@@ -257,7 +260,7 @@ function checkDesc(val, spanId) {
 }
 
 //Validate form
-async function validateForm() {
+async function validateFormForAddingProduct() {
   const name = document.getElementById("name").value.trim();
   const price = document.getElementById("price").value.trim();
   const screen = document.getElementById("screen").value.trim();
@@ -269,6 +272,27 @@ async function validateForm() {
 
   let isValid = true;
   isValid &= required(name, "tbName") && (await checkExisted(name, "tbName"));
+  isValid &= required(price, "tbPrice") && checkNumber(price, "tbPrice");
+  isValid &= required(screen, "tbScreen");
+  isValid &= required(backCamera, "tbBackCamera");
+  isValid &= required(frontCamera, "tbFrontCamera");
+  isValid &= required(img, "tbImg");
+  isValid &= required(desc, "tbDesc") && checkDesc(desc, "tbDesc");
+  isValid &= checkSelected(type, "tbType");
+  return isValid;
+}
+
+async function validateFormForUpdatingProduct() {
+  const name = document.getElementById("name").value.trim();
+  const price = document.getElementById("price").value.trim();
+  const screen = document.getElementById("screen").value.trim();
+  const backCamera = document.getElementById("backCamera").value.trim();
+  const frontCamera = document.getElementById("frontCamera").value.trim();
+  const img = document.getElementById("img").value;
+  const desc = document.getElementById("desc").value;
+  const type = document.getElementById("type").value;
+
+  let isValid = true;
   isValid &= required(price, "tbPrice") && checkNumber(price, "tbPrice");
   isValid &= required(screen, "tbScreen");
   isValid &= required(backCamera, "tbBackCamera");
