@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Quản lý sản phẩm</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+</head>
+
+<body>
+  <div class="container">
+    <nav class="navbar navbar-expand-sm navbar-dark bg-primary">
+      <a class="navbar-brand" href="#">Mobile World</a>
+      <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#collapsibleNavId"
+        aria-controls="collapsibleNavId" aria-expanded="false" aria-label="Toggle navigation"></button>
+      <div class="collapse navbar-collapse" id="collapsibleNavId">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Products</a>
+          </li>
+          <li class="nav-item active"><a class="nav-link" href="qlsp.html">QLSP</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <header class="display-4 my-4">
+      Quản lý Sản phẩm
+    </header>
+    <!-- Phan tab menu -->
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" href="#DanhSachSanPham" role="tab" data-toggle="tab">Danh sách sản phẩm</a>
+      </li>
+    </ul>
+    <br />
+    <!-- Tab panes -->
+    <div class="tab-content">
+      <!--Danh sách người dùng -->
+      <div role="tabpanel" class="tab-pane  in active" id="DanhSachSanPham">
+        <div class="row">
+          <div class="col-md-8">
+            <!-- BEGIN BUTTOM THÊM MỚI -->
+            <button id="btnThemSanPham" class="btn btn-success mb-3" data-toggle="modal" data-target="#myModal">
+              <i class="fa fa-plus mr-1"></i>
+              Thêm Mới
+            </button>
+            <!-- END BUTTON THÊM MỚI -->
+          </div>
+          <div class="col-md-4">
+
+          </div>
+        </div>
+        <div class="clear-fix"></div>
+        <div class="tblSanPham" id="tblSanPham">
+          <!-- BEGIN TABLE NGƯỜI DÙNG -->
+          <table class="table table-bordered">
+            <colgroup>
+              <col span="1" style="width: 5%;">
+              <col span="1" style="width: 15%;">
+              <col span="1" style="width: 10%;">
+              <col span="1" style="width: 25%;">
+              <col span="1" style="width: 25%;">
+              <col span="1" style="width: 20%;">
+            </colgroup>
+            <thead>
+              <th>STT</th>
+              <th>Tên sản phẩm</th>
+              <th>Giá</th>
+              <th>Hình Ảnh</th>
+              <th>Mô tả</th>
+              <th>Action</th>
+            </thead>
+            <tbody id="tblDanhSachSanPham"></tbody>
+          </table>
+          <!-- END TABLE NGƯỜI DÙNG -->
+        </div>
+        <br />
+      </div>
+      <!-- Kết thúc danh sách người dùng -->
+      <!-- Danh sách khóa học -->
+      <div role="tabpanel" class="tab-pane fade" id="DanhSachKhoaHoc">
+        <span>Đang cập nhật...</span>
+      </div>
+      <!-- Kết thúc danh sách khóa học -->
+      <!-- Thống kê -->
+      <div role="tabpanel" class="tab-pane fade" id="ThongKe">
+        <span>Đang cập nhật...</span>
+      </div>
+      <!-- Kết thúc thống kê -->
+    </div>
+
+    <!--KetThuc Tabmenu-->
+
+    <!-- The Modal -->
+    <div class="modal fade" id="myModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">Thông tin sản phẩm</h4>
+            <button type="button" class="close" data-dismiss="modal">
+              &times;
+            </button>
+          </div>
+          <!-- Modal body -->
+          <div class="modal-body">
+            <div class="form-group" style="display:none">
+              <label>Id</label>
+              <input id="Id" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label>Tên sản phẩm</label>
+              <input id="name" class="form-control" placeholder="Nhập vào tên sản phẩm" />
+              <span id="tbName" style="display: none"></span>
+            </div>
+            <div class="form-group">
+              <label>Đơn giá</label>
+              <input id="price" class="form-control" placeholder="Nhập vào đơn giá" />
+              <span id="tbPrice" style="display: none"></span>
+            </div>
+            <div class="form-group">
+              <label>Màn hình</label>
+              <input id="screen" class="form-control" placeholder="Nhập vào thông tin màn hình" />
+              <span id="tbScreen" style="display: none"></span>
+            </div>
+            <div class="form-group">
+              <label>Camera sau</label>
+              <input id="backCamera" class="form-control" placeholder="Nhập vào thông tin camera sau" />
+              <span id="tbBackCamera" style="display: none"></span>
+            </div>
+            <div class="form-group">
+              <label>Camera trước</label>
+              <input id="frontCamera" class="form-control" placeholder="Nhập vào thông tin camera trước" />
+              <span id="tbFrontCamera" style="display: none"></span>
+            </div>
+            <div class="form-group">
+              <label>Hình ảnh</label>
+              <input id="img" class="form-control" placeholder="Nhập vào link hình ảnh" />
+              <span id="tbImg" style="display: none"></span>
+            </div>
+            <div class="form-group">
+              <label>Mô tả</label>
+              <textarea name="" id="desc" class="form-control" placeholder="Nhập vào mô tả"></textarea>
+              <span id="tbDesc" style="display: none"></span>
+            </div>
+            <div class="form-group">
+              <label for="">Loại Sản phẩm: </label>
+              <select class="form-control" id="type">
+                <option value="0">Chọn loại sản phẩm</option>
+                <option value="iPhone">iPhone</option>
+                <option value="Samsung">Samsung</option>
+              </select>
+              <span id="tbType" style="display: none"></span>
+            </div>
+          </div>
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <button class="btn btn-primary" id="addProductBtn" onclick="addProduct()">Thêm</button>
+            <button class="btn btn-primary" id="updateProductBtn" onclick="updateProduct()" style="display: none;">Cập
+              Nhật</button>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="container"></div>
+  <style>
+    #container {
+      min-width: 310px;
+      max-width: 800px;
+      height: 400px;
+      margin: 0 auto;
+    }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/modules/series-label.js"></script>
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0/axios.min.js"
+    integrity="sha512-26uCxGyoPL1nESYXHQ+KUmm3Maml7MEQNWU8hIt1hJaZa5KQAQ5ehBqK6eydcCOh6YAuZjV3augxu/5tY4fsgQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="/assets/qlsp/product.js"></script>
+  <script src="/assets/qlsp/qlsp.js"></script>
+</body>
+
+</html>
