@@ -43,15 +43,12 @@ const filterProducts = (data) => {
 
 //function map data
 const mapData = (dataFromAPI) => {
-  const result = [];
-  dataFromAPI.forEach((item) => {
+  // can use map here
+  return dataFromAPI.map((item) => {
     const { name, price, screen, backCamera, frontCamera, img, desc, type } =
       item;
-    result.push(
-      new Product(name, price, screen, backCamera, frontCamera, img, desc, type)
-    );
+    return new Product(name, price, screen, backCamera, frontCamera, img, desc, type)
   });
-  return result;
 };
 
 //function render cart
@@ -109,7 +106,15 @@ const checkCart = (data) => {
     //clear cart
     const btnClearCart = document.getElementById("clearCart");
     btnClearCart.addEventListener("click", () => {
-      data = [];
+      // fix bug here: https://www.loom.com/share/9a392aa2dedf42abbe1bd53d0610cdd3
+      // explanation:
+      // when using `data = []`, you are reassigning variable `data` to point to a new array
+      // the old data registered in callback is still pointing to the old array
+      // so when you click clear cart, the old data is still there
+      // when you add item again, it is added to the old array
+      // solution => use `splice` to mutate directly the original array,
+      // as you have done in do in `btnRemoveCartItems` above
+      data.splice(0, data.length);
       saveCart(data);
       renderCart(data);
     });
@@ -139,60 +144,8 @@ window.onload = async () => {
   //get local storage
   getCart();
 
-  //add item to cart
-  const btnAddToCarts = document.querySelectorAll("#btnAddToCart");
-  btnAddToCarts.forEach((item, index) => {
-    item.addEventListener("click", (e) => {
-      const btnAddToCart = e.target;
-      let qty = parseInt(
-        btnAddToCart.parentElement.querySelector("#qty").innerHTML
-      );
-
-      //check if that item already exists
-      for (let i in cart) {
-        if (cart[i].product.name === products[index].name) {
-          cart[i].qty += qty;
-          saveCart(cart);
-          renderCart(cart);
-          return;
-        }
-      }
-      const cartItem = { product: products[index], qty: qty };
-      cart.push(cartItem);
-      saveCart(cart);
-      renderCart(cart);
-    });
-  });
-
-  //add quantity button
-  const addBtns = document.querySelectorAll(".btn-add");
-  addBtns.forEach((item) => {
-    item.addEventListener("click", (e) => {
-      const addBtn = e.target;
-      addBtn.parentElement.querySelector(".btn-sub").disabled = false;
-      let qty = parseInt(addBtn.parentElement.querySelector("#qty").innerHTML);
-      qty += 1;
-      addBtn.parentElement.querySelector("#qty").innerHTML = qty;
-    });
-  });
-
-  //subtract quantity button
-  const subBtns = document.querySelectorAll(".btn-sub");
-  subBtns.forEach((item) => {
-    let qty = parseInt(item.parentElement.querySelector("#qty").innerHTML);
-    if (qty < 2) {
-      item.disabled = true;
-    }
-    item.addEventListener("click", (e) => {
-      const subBtn = e.target;
-      let qty = parseInt(subBtn.parentElement.querySelector("#qty").innerHTML);
-      qty -= 1;
-      if (qty < 2) {
-        subBtn.disabled = true;
-      }
-      subBtn.parentElement.querySelector("#qty").innerHTML = qty;
-    });
-  });
+  // call reusable function at end of file
+  registerClickEvents(products);
 };
 
 /*------------------------------
@@ -201,58 +154,83 @@ When Filter Products
 document.getElementById("selectBrand").onchange = async () => {
   let products = await loadProduct();
 
-  //add item to cart
+  // call reusable function at end of file
+  registerClickEvents(products);
+};
+
+
+/*------------------------------
+Reusable click event register functions
+--------------------------------*/
+
+// can simplify add & subtract click handler with this
+/**
+ * JSDoc syntax for documenting code and provide code suggestion (intellisense) when not using typescript
+ * for example, if using vscode, try hover mouse over `btn` or `increment` in `onQuantityBtnClick(btn, increment)` and
+ * the type of the variable will be shown
+ * 
+ * @param {HTMLButtonElement} btn 
+ * @param {(-1 | 1)} increment
+ */
+function onQuantityBtnClick(btn, increment) {
+  btn.disabled = false;
+  const qtyElement = btn.parentElement.querySelector("#qty");
+  let qty = parseInt(qtyElement.innerHTML);
+  qty += increment;
+  qtyElement.innerHTML = qty;
+
+  const subBtn = btn.parentElement.querySelector(".btn-sub");
+  subBtn.disabled = qty < 2;
+}
+
+function registerClickEventForQuantityBtns() {
+  // add btns
+  document.querySelectorAll(".btn-add").forEach((btn) => {
+    btn.addEventListener("click", (e) => onQuantityBtnClick(btn, 1));
+  });
+
+  // subtract btns
+  document.querySelectorAll(".btn-sub").forEach((btn) => {
+    let qty = parseInt(btn.parentElement.querySelector("#qty").innerHTML);
+    if (qty < 2) {
+      btn.disabled = true;
+    }
+    btn.addEventListener("click", (e) => onQuantityBtnClick(btn, -1));
+  });
+}
+
+/**
+ * @param {Product[]} products 
+ */
+function registerClickEventForAddToCartBtns(products) {
   const btnAddToCarts = document.querySelectorAll("#btnAddToCart");
-  btnAddToCarts.forEach((item, index) => {
-    item.addEventListener("click", (e) => {
-      const btnAddToCart = e.target;
+  btnAddToCarts.forEach((btn, index) => {
+    btn.addEventListener("click", (e) => {
+      // use the btn element in `btnAddToCarts` instead of e.target here
+      // because in some case if there are nested element within btn, e.target might not be the btn
+      // e.target === the element that triggered the event 
+      
       let qty = parseInt(
-        btnAddToCart.parentElement.querySelector("#qty").innerHTML
+        btn.parentElement.querySelector("#qty").innerHTML
       );
 
-      //check if that item already exists
-      for (let i in cart) {
-        if (cart[i].product.name === products[index].name) {
-          cart[i].qty += qty;
-          saveCart(cart);
-          renderCart(cart);
-          return;
-        }
+      // can simplify code with this
+      const existingItem = cart.find(item => item.product.name === products[index].name);
+      if (existingItem) {
+        existingItem.qty += qty;
+      } else {
+        cart.push({ product: products[index], qty });
       }
-      const cartItem = { product: products[index], qty: qty };
-      cart.push(cartItem);
       saveCart(cart);
       renderCart(cart);
     });
   });
+}
 
-  //add quantity button
-  const addBtns = document.querySelectorAll(".btn-add");
-  addBtns.forEach((item) => {
-    item.addEventListener("click", (e) => {
-      const addBtn = e.target;
-      addBtn.parentElement.querySelector(".btn-sub").disabled = false;
-      let qty = parseInt(addBtn.parentElement.querySelector("#qty").innerHTML);
-      qty += 1;
-      addBtn.parentElement.querySelector("#qty").innerHTML = qty;
-    });
-  });
-
-  //subtract quantity button
-  const subBtns = document.querySelectorAll(".btn-sub");
-  subBtns.forEach((item) => {
-    let qty = parseInt(item.parentElement.querySelector("#qty").innerHTML);
-    if (qty < 2) {
-      item.disabled = true;
-    }
-    item.addEventListener("click", (e) => {
-      const subBtn = e.target;
-      let qty = parseInt(subBtn.parentElement.querySelector("#qty").innerHTML);
-      qty -= 1;
-      if (qty < 2) {
-        subBtn.disabled = true;
-      }
-      subBtn.parentElement.querySelector("#qty").innerHTML = qty;
-    });
-  });
-};
+/**
+ * @param {Product[]} products 
+ */
+function registerClickEvents(products) {
+  registerClickEventForQuantityBtns();
+  registerClickEventForAddToCartBtns(products);
+}
